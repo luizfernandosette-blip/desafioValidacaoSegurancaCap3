@@ -1,4 +1,4 @@
-package com.devsuperior.security.config;
+package com.devsuperior.bds04.config;
 
 import java.util.Arrays;
 

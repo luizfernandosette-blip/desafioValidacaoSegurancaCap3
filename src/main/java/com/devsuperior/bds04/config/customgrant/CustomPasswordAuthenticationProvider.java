@@ -1,4 +1,4 @@
-package com.devsuperior.security.config.customgrant;
+package com.devsuperior.bds04.config.customgrant;
 
 import java.security.Principal;
 import java.util.HashSet;

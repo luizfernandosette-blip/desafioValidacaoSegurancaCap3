@@ -9,8 +9,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.devsuperior.bds04.entities.Role;
 import com.devsuperior.bds04.entities.User;
+import com.devsuperior.bds04.projections.UserDetailsProjection;
 import com.devsuperior.bds04.repositories.UserRepository;
-import com.devsuperior.security.projections.UserDetailsProjection;
 
 
 @Service
