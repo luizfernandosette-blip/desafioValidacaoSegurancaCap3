@@ -1,60 +1,56 @@
 package com.devsuperior.bds04.controllers;
 
 import java.net.URI;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import com.devsuperior.bds04.dto.CityDTO;
-import com.devsuperior.bds04.services.CityService;
-import com.devsuperior.bds04.services.exceptions.DatabaseException;
+import com.devsuperior.bds04.dto.EventDTO;
+import com.devsuperior.bds04.services.EventService;
 import com.devsuperior.bds04.services.exceptions.ResourceNotFoundException;
 
 import jakarta.validation.Valid;
 
+
 @RestController
-@RequestMapping(value = "/cities")
-public class CityController {
+@RequestMapping(value = "/events")
+public class EventController {
 
 	@Autowired
-	private CityService service;
+	EventService service;
 	
 	@GetMapping
-	public ResponseEntity<List<CityDTO>> findAll() {
-		List<CityDTO> list = service.findAllSortedByName();
-		return ResponseEntity.ok().body(list);
+	public ResponseEntity<Page<EventDTO>> findAll(Pageable pageable) {
+		Page<EventDTO> page = service.findAll(pageable);
+		return ResponseEntity.ok().body(page);
 	}
 	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
 	@PostMapping
-	public ResponseEntity<CityDTO> insert(@Valid @RequestBody CityDTO dto) {
+	public ResponseEntity<EventDTO> insert(@Valid @RequestBody EventDTO dto) {
 		dto = service.insert(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
 	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Long id) {
+	@PutMapping("/{id}")
+	public ResponseEntity<EventDTO> update(@PathVariable Long id, @RequestBody EventDTO dto) {
 		try {
-			service.delete(id);
-			return ResponseEntity.noContent().build();
+			dto = service.update(id, dto);
+			return ResponseEntity.ok().body(dto);
 		} catch (ResourceNotFoundException e) {
 			return ResponseEntity.notFound().build();
-		} catch (DatabaseException e) {
-			return ResponseEntity.badRequest().build();
 		}
 		
-		
 	}
-	
 }
